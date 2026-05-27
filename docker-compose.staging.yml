@@ -1,0 +1,9 @@
+services:
+  smartcart-staging:
+    image: smartcart-ai:${BUILD_NUMBER:-local}
+    container_name: smartcart-ai-staging
+    ports:
+      - "5001:5000"
+    environment:
+      - ENVIRONMENT=staging
+    restart: unless-stopped

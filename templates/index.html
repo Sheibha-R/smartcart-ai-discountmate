@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartCart AI – DiscountMate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<header class="hero">
+    <nav class="navbar">
+        <div class="brand">
+            <div class="brand-icon">🛒</div>
+            <div>
+                <h2>SmartCart AI</h2>
+                <p>DiscountMate</p>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="#dashboard">Dashboard</a>
+            <a href="#cart">Cart</a>
+            <a href="#profile">Profile</a>
+            <a href="#offers">Offers</a>
+            <a href="#membership">Membership</a>
+            <a href="#pipeline">Pipeline</a>
+        </div>
+
+        <div class="auth-buttons" id="authButtons">
+            <button onclick="openSignup()">Sign Up</button>
+            <button onclick="openLogin()" class="login-btn">Login</button>
+        </div>
+
+        <div class="auth-buttons hidden" id="logoutButtons">
+            <button onclick="logoutUser()" class="login-btn">Logout</button>
+        </div>
+    </nav>
+
+    <section class="hero-grid">
+        <div class="hero-text">
+            <p class="eyebrow">DataBytes DiscountMate Extension</p>
+            <h1>Smart grocery shopping with AI savings</h1>
+            <p class="hero-description">
+                Compare prices, add products to cart, apply coupons, activate memberships,
+                manage location benefits, and receive AI Premium family meal guidance.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#dashboard" class="btn primary">Start Shopping</a>
+                <a href="#membership" class="btn secondary">View Membership</a>
+            </div>
+
+            <div class="hero-badges">
+                <span>Interactive Cart</span>
+                <span>Location Benefits</span>
+                <span>AI Meal Guidance</span>
+                <span>Jenkins Ready</span>
+            </div>
+        </div>
+
+        <div class="hero-panel">
+            <div class="panel-top">
+                <span class="large-emoji">🛍️</span>
+                <span class="live-pill">Live Flask App</span>
+            </div>
+            <h3>Smart Savings Snapshot</h3>
+            <div class="saving-amount" id="heroSaving">$0.00</div>
+            <p>Total estimated saving from your cart, recommended options, membership and coupons.</p>
+
+            <div class="stats-grid">
+                <div><strong id="heroCartCount">0</strong><span>Cart Items</span></div>
+                <div><strong id="heroCartValue">$0</strong><span>Cart Value</span></div>
+                <div><strong>7</strong><span>Pipeline Stages</span></div>
+            </div>
+        </div>
+    </section>
+</header>
+
+<main>
+    <section id="dashboard" class="section dashboard-section">
+        <div class="section-heading">
+            <p class="eyebrow">Interactive Shopping</p>
+            <h2>SmartCart AI Dashboard</h2>
+            <p>Select products, compare store prices, and add your preferred option to cart.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <aside class="controls">
+                <h3>Shopping Preferences</h3>
+
+                <label for="itemSelect">Choose grocery item</label>
+                <select id="itemSelect">
+                    <option value="milk">Milk</option>
+                    <option value="bread">Bread</option>
+                    <option value="rice">Rice</option>
+                    <option value="eggs">Eggs</option>
+                    <option value="pasta">Pasta</option>
+                    <option value="chicken">Chicken</option>
+                    <option value="apples">Apples</option>
+                    <option value="salmon">Salmon</option>
+                    <option value="beef">Beef</option>
+                    <option value="tuna">Tuna</option>
+                    <option value="prawns">Prawns</option>
+                    <option value="turkey">Turkey</option>
+                    <option value="lamb">Lamb</option>
+                    <option value="broccoli">Broccoli</option>
+                    <option value="spinach">Spinach</option>
+                    <option value="carrots">Carrots</option>
+                    <option value="lentils">Lentils</option>
+                    <option value="tofu">Tofu</option>
+                    <option value="oats">Oats</option>
+                    <option value="yogurt">Yogurt</option>
+                    <option value="chickpeas">Chickpeas</option>
+                    <option value="bananas">Bananas</option>
+                </select>
+
+                <label for="budgetInput">Weekly budget</label>
+                <input id="budgetInput" type="number" min="5" max="200" value="30">
+
+                <label for="prioritySelect">Recommendation priority</label>
+                <select id="prioritySelect">
+                    <option value="price">Lowest Price</option>
+                    <option value="discount">Highest Discount</option>
+                    <option value="rating">Best Rating</option>
+                </select>
+
+                <button id="analyseButton" class="analyse-btn">Analyse Product</button>
+                <button id="addRecommendedButton" class="cart-btn">Add Recommended to Cart</button>
+                <button id="resetButton" class="reset-btn">Reset Demo</button>
+
+                <div id="statusBox" class="status-box">Ready to analyse your grocery savings.</div>
+            </aside>
+
+            <section class="results">
+                <div class="results-header">
+                    <div>
+                        <p class="eyebrow">Recommendation Output</p>
+                        <h3 id="resultTitle">Results</h3>
+                    </div>
+                    <span id="apiBadge">Live Flask API</span>
+                </div>
+
+                <div id="summaryCards" class="summary-grid"></div>
+
+                <div class="sub-section-title">
+                    <h3>Store Comparison</h3>
+                    <p>Choose any product or add the recommended option.</p>
+                </div>
+
+                <div id="comparisonResults" class="product-grid"></div>
+
+                <div class="split-grid">
+                    <div id="substituteBox" class="info-box"></div>
+                    <div id="discountBox" class="info-box"></div>
+                </div>
+
+                <div id="nearbyStoresBox" class="info-box full-width-box hidden"></div>
+                <div id="usageBonusBox" class="info-box full-width-box hidden"></div>
+                <div id="premiumGuidanceBox" class="premium-guidance-box hidden"></div>
+            </section>
+        </div>
+    </section>
+
+    <section id="cart" class="section cart-section">
+        <div class="section-heading">
+            <p class="eyebrow">Shopping Cart</p>
+            <h2>Your SmartCart</h2>
+            <p>View selected products, compare cart value, apply coupons, and see recommended savings.</p>
+        </div>
+
+        <div class="cart-layout">
+            <div class="cart-box">
+                <div class="cart-header">
+                    <h3>Cart Items</h3>
+                    <button onclick="clearCart()" class="small-danger-btn">Clear Cart</button>
+                </div>
+                <div id="cartItems" class="cart-items"></div>
+            </div>
+
+            <aside class="cart-summary">
+                <h3>Cart Summary</h3>
+
+                <div class="summary-line"><span>Selected cart value</span><strong id="rawCartTotal">$0.00</strong></div>
+                <div class="summary-line hidden" id="memberDiscountRow"><span id="memberDiscountLabel">Member discount</span><strong id="memberDiscountValue">$0.00</strong></div>
+                <div class="summary-line hidden" id="usageBonusRow"><span>Smart Plus usage bonus</span><strong id="usageBonusValue">$0.00</strong></div>
+                <div class="summary-line hidden" id="couponDiscountRow"><span>Coupon discount</span><strong id="couponDiscountValue">$0.00</strong></div>
+                <div class="summary-line"><span>Final cart value</span><strong id="cartTotal">$0.00</strong></div>
+                <div class="summary-line"><span>Recommended option value</span><strong id="recommendedTotal">$0.00</strong></div>
+                <div class="summary-line saving-line"><span>Potential saving</span><strong id="potentialSaving">$0.00</strong></div>
+
+                <label for="couponInput">Apply coupon code</label>
+                <div class="coupon-row">
+                    <input id="couponInput" type="text" placeholder="Try SAVE10 or STUDENT15">
+                    <button onclick="applyCoupon()">Apply</button>
+                </div>
+
+                <div id="couponMessage" class="coupon-message"></div>
+                <button onclick="openCheckout()" class="checkout-btn">Checkout Demo</button>
+            </aside>
+        </div>
+    </section>
+
+    <section id="profile" class="section profile-section">
+        <div class="section-heading">
+            <p class="eyebrow">Member Profile</p>
+            <h2>User information and enabled benefits</h2>
+            <p>This section displays logged-in user information without showing the password.</p>
+        </div>
+
+        <div class="profile-layout">
+            <div class="profile-card">
+                <h3>Current User</h3>
+                <div id="profileInfo" class="profile-info">Not logged in.</div>
+            </div>
+
+            <div class="profile-card hidden" id="locationBenefitsCard">
+                <h3>Location Benefits</h3>
+                <p>Nearby store search works only when location is enabled for Basic Saver and Smart Plus members.</p>
+
+                <label for="locationPreference">Location access preference</label>
+                <select id="locationPreference">
+                    <option value="while_using">Access location only while using app</option>
+                    <option value="always">Access location always even when app not used</option>
+                    <option value="off">Keep location off</option>
+                </select>
+
+                <button onclick="requestLocationUpdate()" class="analyse-btn">Update Location Preference</button>
+                <div id="locationMessage" class="coupon-message"></div>
+            </div>
+
+            <div class="profile-card premium-family-card hidden" id="premiumFamilyCard">
+                <h3>AI Premium Family Profile</h3>
+                <p>Premium members can add family details for personalised meal, fitness and sleep recommendations. Existing members are kept unless removed manually.</p>
+
+                <label for="familyCount">How many new family members do you want to add?</label>
+                <input id="familyCount" type="number" min="0" max="8" value="0">
+                <button onclick="buildFamilyFields()" class="reset-btn">Create Family Fields</button>
+
+                <div id="familyFields" class="family-fields"></div>
+                <button onclick="saveFamilyProfile()" class="analyse-btn">Add Family Member Details</button>
+                <div id="familyMessage" class="coupon-message"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="savingsReport" class="section report-section hidden">
+        <div class="section-heading">
+            <p class="eyebrow">Savings Report</p>
+            <h2 id="reportTitle">Your Savings Report</h2>
+            <p id="reportSubtitle">Plan-based savings insights will appear here.</p>
+        </div>
+    
+        <div id="reportContent" class="report-grid"></div>
+    </section>
+
+    <section id="offers" class="section offers-section">
+        <div class="section-heading">
+            <p class="eyebrow">Upcoming Offers</p>
+            <h2>Discounts and planned promotions</h2>
+            <p>Smart Plus members can unlock extra discounts based on app usage.</p>
+        </div>
+        <div id="offersGrid" class="offers-grid"></div>
+    </section>
+
+    <section id="membership" class="section membership-section">
+        <div class="section-heading">
+            <p class="eyebrow">Membership Plans</p>
+            <h2>Unlock better grocery savings</h2>
+            <p>Select a plan and complete the guided activation steps.</p>
+        </div>
+        <div id="plansGrid" class="plans-grid"></div>
+    </section>
+
+    <section id="pipeline" class="section pipeline-section">
+        <div class="section-heading">
+            <p class="eyebrow">DevOps Pipeline Readiness</p>
+            <h2>Designed for all 7 Jenkins HD stages</h2>
+            <p>This project supports Build, Test, Code Quality, Security, Deploy, Release, and Monitoring.</p>
+        </div>
+
+        <div class="pipeline-grid">
+            <div class="pipeline-card"><span>01</span><h3>Build</h3><p>Docker image and artefact.</p></div>
+            <div class="pipeline-card"><span>02</span><h3>Test</h3><p>Pytest endpoint tests.</p></div>
+            <div class="pipeline-card"><span>03</span><h3>Quality</h3><p>Flake8, Pylint, SonarQube-ready.</p></div>
+            <div class="pipeline-card"><span>04</span><h3>Security</h3><p>Bandit scan.</p></div>
+            <div class="pipeline-card"><span>05</span><h3>Deploy</h3><p>Staging container.</p></div>
+            <div class="pipeline-card"><span>06</span><h3>Release</h3><p>Production promotion.</p></div>
+            <div class="pipeline-card"><span>07</span><h3>Monitor</h3><p>Health and metrics.</p></div>
+        </div>
+
+        <div class="endpoint-buttons centered">
+            <a href="/health" target="_blank">Open /health</a>
+            <a href="/metrics" target="_blank">Open /metrics</a>
+            <a href="/pipeline-status" target="_blank">Pipeline Status</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>SmartCart AI – DiscountMate</strong>
+    <span>SIT753 Task 7.3HD Jenkins DevOps Pipeline Project</span>
+</footer>
+
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+        <h2>Create Account</h2>
+        <p>Enter the details below and complete captcha verification.</p>
+
+        <input id="signupName" placeholder="Full name">
+        <input id="signupEmail" placeholder="Email address">
+        <input id="signupPassword" type="password" placeholder="Create password">
+        <input id="signupConfirmPassword" type="password" placeholder="Confirm password">
+
+        <div class="captcha-box compact-captcha">
+            <div><strong>Captcha Code</strong><div id="signupCaptchaDisplay" class="captcha-code">-----</div></div>
+            <button onclick="loadSignupCaptcha()" class="reset-btn">Refresh</button>
+        </div>
+
+        <input id="signupCaptchaInput" placeholder="Enter captcha code">
+        <button onclick="signupUser()" class="analyse-btn">Create Account</button>
+        <div id="signupMessage" class="modal-message"></div>
+    </div>
+</div>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+        <h2>Login</h2>
+        <p>Log in to your SmartCart account. Plan benefits appear only if a plan is active.</p>
+
+        <input id="loginEmail" placeholder="Email address">
+        <input id="loginPassword" type="password" placeholder="Password">
+
+        <button onclick="loginUser()" class="analyse-btn">Login</button>
+        <button onclick="showForgotPassword()" class="reset-btn">Forgot password?</button>
+
+        <div id="forgotPasswordBox" class="hidden">
+            <input id="recoveryEmail" placeholder="Recovery email address">
+            <button onclick="sendRecoveryLink()" class="cart-btn">Send reset link</button>
+        </div>
+
+        <div id="loginMessage" class="modal-message"></div>
+    </div>
+</div>
+
+<div id="membershipWizardModal" class="modal">
+    <div class="modal-content large-modal">
+        <button class="modal-close" onclick="closeModal('membershipWizardModal')">×</button>
+
+        <div class="wizard-progress" id="wizardProgress"></div>
+
+        <h2 id="wizardTitle">Membership Activation</h2>
+        <p id="selectedPlanText">Selected plan</p>
+
+        <div id="wizardStep1" class="wizard-screen">
+            <h3>Step 1: Mandatory account and payment details</h3>
+            <p>Available balance should be more than the selected plan price. All details, including card details, should be correct and the card/account number should not end with 0000.</p>
+
+            <div class="form-grid">
+                <input id="paymentEmail" placeholder="Account email">
+                <input id="membershipPassword" type="password" placeholder="Create or confirm password">
+                <input id="cardName" placeholder="Name on card">
+                <input id="cardNumber" placeholder="Card/account number">
+                <input id="demoBalance" type="number" placeholder="Available balance">
+            </div>
+
+            <label for="paymentMethod">Payment method</label>
+            <select id="paymentMethod">
+                <option value="Card">Card</option>
+                <option value="Bank transfer">Bank transfer</option>
+                <option value="Digital wallet">Digital wallet</option>
+            </select>
+        </div>
+
+        <div id="wizardStep2" class="wizard-screen hidden">
+            <h3>Step 2: Location access</h3>
+            <p>Basic Saver and Smart Plus benefits work best when location access is enabled.</p>
+
+            <div class="location-choice-box">
+                <label><input type="radio" name="locationAccess" value="while_using" checked> Access location only while using app</label>
+                <label><input type="radio" name="locationAccess" value="always"> Access location always even when app not used</label>
+                <label><input type="radio" name="locationAccess" value="off"> Keep location off</label>
+            </div>
+        </div>
+
+        <div id="wizardStep3" class="wizard-screen hidden">
+            <h3>Step 3: AI Premium family details</h3>
+            <p>These details help generate customised meal planning. You can edit and remove family members later from your profile.</p>
+
+            <label for="wizardFamilyCount">How many family members do you want to add now?</label>
+            <input id="wizardFamilyCount" type="number" min="0" max="8" value="0">
+            <button onclick="buildWizardFamilyFields()" class="reset-btn">Create Family Fields</button>
+
+            <div id="wizardFamilyFields" class="family-fields"></div>
+        </div>
+
+        <div id="wizardFinal" class="wizard-screen hidden">
+            <h3>Final Step: Captcha verification</h3>
+            <p>Membership will only be activated after the captcha is entered correctly.</p>
+
+            <div class="captcha-box">
+                <div><strong>Captcha Code</strong><div id="membershipCaptchaDisplay" class="captcha-code">-----</div></div>
+                <button onclick="loadMembershipCaptcha()" class="reset-btn">Refresh Captcha</button>
+            </div>
+
+            <input id="membershipCaptchaInput" placeholder="Enter captcha code">
+        </div>
+
+        <div class="wizard-actions">
+            <button onclick="previousWizardStep()" class="reset-btn" id="wizardBackBtn">Back</button>
+            <button onclick="nextWizardStep()" class="analyse-btn" id="wizardNextBtn">Next</button>
+            <button onclick="submitMembershipActivation()" class="checkout-btn hidden" id="wizardSubmitBtn">Verify Captcha, Pay and Activate</button>
+        </div>
+
+        <div id="paymentMessage" class="modal-message"></div>
+    </div>
+</div>
+
+<div id="locationWarningModal" class="modal">
+    <div class="modal-content">
+        <h2>Location Benefits Warning</h2>
+        <p>Benefits can be well used only while location is accessed. Nearby store search and best local discounts will be unavailable if location is off.</p>
+
+        <div class="modal-action-row">
+            <button onclick="keepLocationOn()" class="analyse-btn">Keep it on</button>
+            <button onclick="confirmLocationOff()" class="reset-btn">Keep it off</button>
+        </div>
+    </div>
+</div>
+
+<div id="checkoutModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('checkoutModal')">×</button>
+        <h2>Demo Checkout Payment</h2>
+        <p>Select a payment method to complete the demo checkout.</p>
+
+        <select id="checkoutPaymentMethod">
+            <option value="Card">Card</option>
+            <option value="Bank transfer">Bank transfer</option>
+            <option value="Digital wallet">Digital wallet</option>
+        </select>
+
+        <input id="checkoutName" placeholder="Name">
+        <input id="checkoutNumber" placeholder="Card/account number">
+
+        <button onclick="completeCheckout()" class="checkout-btn">Complete Payment</button>
+        <div id="checkoutMessage" class="modal-message"></div>
+    </div>
+</div>
+
+<div id="popup" class="popup"></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+services:
+  smartcart-prod:
+    image: smartcart-ai:latest
+    container_name: smartcart-ai-prod
+    ports:
+      - "5002:5000"
+    environment:
+      - ENVIRONMENT=production
+    restart: unless-stopped
